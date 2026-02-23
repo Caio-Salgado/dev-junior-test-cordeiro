@@ -2,6 +2,15 @@
 
 Exercicio pratico fullstack para gerenciamento de produtos de energia solar. O projeto consiste em uma API REST no backend e uma interface web no frontend, ambos com TODOs para o candidato implementar.
 
+## Repositorio
+
+https://github.com/lucas-issayama/dev-junior-test-cordeiro
+
+```bash
+git clone https://github.com/lucas-issayama/dev-junior-test-cordeiro.git
+cd dev-junior-test-cordeiro
+```
+
 ## Objetivo do exercicio
 
 O candidato deve completar os TODOs espalhados pelo codigo para fazer a aplicacao funcionar por completo:
