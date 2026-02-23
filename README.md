@@ -13,10 +13,26 @@ cd dev-junior-test-cordeiro
 
 ## Objetivo do exercicio
 
-O candidato deve completar os TODOs espalhados pelo codigo para fazer a aplicacao funcionar por completo:
+Voce recebera um projeto fullstack parcialmente implementado. A estrutura ja esta pronta — servidor, banco de dados, componentes visuais — mas diversas funcionalidades estao incompletas, marcadas com **TODOs** no codigo.
 
-- **Backend:** Implementar endpoints da API REST (filtro, CRUD, estatisticas)
-- **Frontend:** Conectar os componentes de filtro e paginacao com a API, gerenciar estados do React
+Seu objetivo e completar esses TODOs para fazer a aplicacao funcionar por completo:
+
+- **Backend (7 TODOs):** Implementar endpoints da API REST — filtro por tipo, CRUD de produtos e estatisticas
+- **Frontend (6 TODOs):** Conectar os componentes de filtro e paginacao com a API, gerenciar estados do React
+
+Cada TODO no codigo contem instrucoes detalhadas, exemplos e dicas. Leia com atencao antes de implementar.
+
+## Como entregar
+
+1. Faca um **fork** deste repositorio para sua conta do GitHub
+2. Clone o fork e trabalhe localmente
+3. **Faca commits conforme avanca** — queremos ver seu progresso, nao apenas o resultado final. Exemplo:
+   - `feat(backend): implement type filter on GET /products`
+   - `feat(frontend): add selectedType and currentPage states`
+   - `feat(frontend): connect pagination with API`
+4. Ao finalizar, envie o link do seu fork
+
+> **Dica:** Commits pequenos e frequentes mostram seu raciocinio e organizacao. Nao acumule tudo em um unico commit.
 
 ## Stack
 
@@ -195,3 +211,18 @@ A tabela `products` possui os seguintes campos:
 | `enabled` | boolean | Produto ativo/inativo |
 
 O seed popula o banco com **100 produtos** (25 de cada tipo).
+
+## Bonus (opcional)
+
+Terminou todos os TODOs? Implemente funcionalidades extras para se destacar. Algumas ideias:
+
+- Barra de busca por nome de produto
+- Ordenacao por preco, nome ou estoque
+- Dark mode
+- Modal com detalhes do produto ao clicar no card
+- Indicadores visuais de estoque (baixo, medio, alto)
+- Tela de estatisticas consumindo `GET /products/stats`
+- Formulario para criar/editar produto consumindo `POST` e `PUT`
+- Qualquer outra melhoria que voce considere relevante
+
+Nao ha limite — use a criatividade e mostre o que sabe fazer.
