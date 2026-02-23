@@ -1,27 +1,70 @@
 # Dev Junior Test - Cordeiro
 
-Exercicio pratico de API REST com Express, Knex e SQLite para gerenciamento de produtos de energia solar.
+Exercicio pratico fullstack para gerenciamento de produtos de energia solar. O projeto consiste em uma API REST no backend e uma interface web no frontend, ambos com TODOs para o candidato implementar.
+
+## Objetivo do exercicio
+
+O candidato deve completar os TODOs espalhados pelo codigo para fazer a aplicacao funcionar por completo:
+
+- **Backend:** Implementar endpoints da API REST (filtro, CRUD, estatisticas)
+- **Frontend:** Conectar os componentes de filtro e paginacao com a API, gerenciar estados do React
+
+## Stack
+
+| Camada | Tecnologia |
+|--------|------------|
+| **Frontend** | Next.js 14, React 18, Tailwind CSS 3, shadcn/ui, Radix UI |
+| **Backend** | Node.js, Express, Knex (query builder), SQLite (better-sqlite3) |
+| **UI Components** | Card, Badge, Button, Select (shadcn/ui + Radix primitives) |
+| **Utilitarios** | clsx, tailwind-merge, class-variance-authority, lucide-react |
 
 ## Estrutura de pastas
 
 ```
 .
-└── backend/                    # API backend (Node.js)
-    ├── src/                    # Codigo-fonte da aplicacao
-    │   ├── index.js            # Entry point - configura o Express e inicia o servidor na porta 3020
-    │   ├── db.js               # Configuracao da conexao com o banco (Knex + SQLite)
-    │   └── routes/
-    │       └── products.js     # Rotas da API de produtos (TODOs para implementar)
-    ├── migrations/
-    │   └── 001_create_products.js  # Migration que cria a tabela "products"
-    ├── seeds/
-    │   └── 001_products.js     # Seed com 100 produtos (25 inversores, 25 modulos, 25 cabos, 25 conectores)
-    ├── knexfile.js             # Configuracao do Knex (client, conexao, diretorios)
-    ├── package.json            # Dependencias e scripts npm
-    └── .gitignore              # Ignora node_modules e arquivos .sqlite3
+├── README.md
+├── backend/                           # API backend (Node.js + Express)
+│   ├── src/
+│   │   ├── index.js                   # Entry point — Express na porta 3020
+│   │   ├── db.js                      # Conexao com o banco (Knex + SQLite)
+│   │   └── routes/
+│   │       └── products.js            # Rotas da API de produtos (TODOs 0-6)
+│   ├── migrations/
+│   │   └── 001_create_products.js     # Migration da tabela "products"
+│   ├── seeds/
+│   │   └── 001_products.js            # Seed com 100 produtos
+│   ├── knexfile.js                    # Configuracao do Knex
+│   └── package.json
+│
+└── frontend/                          # App frontend (Next.js + shadcn/ui)
+    ├── src/
+    │   ├── app/
+    │   │   ├── layout.js              # Root layout (font Inter)
+    │   │   ├── page.js                # Pagina principal (TODOs 0-5)
+    │   │   ├── globals.css            # Tailwind directives + CSS variables shadcn
+    │   │   └── components/
+    │   │       ├── ProductCard.jsx    # Card de produto (shadcn Card + Badge)
+    │   │       ├── TypeFilter.jsx     # Filtro por tipo (shadcn Select)
+    │   │       └── Pagination.jsx     # Paginacao (shadcn Button)
+    │   ├── components/
+    │   │   └── ui/                    # Componentes shadcn/ui
+    │   │       ├── badge.jsx
+    │   │       ├── button.jsx
+    │   │       ├── card.jsx
+    │   │       └── select.jsx
+    │   └── lib/
+    │       └── utils.js               # Funcao cn() (clsx + tailwind-merge)
+    ├── tailwind.config.js             # Configuracao do Tailwind CSS
+    ├── postcss.config.js              # Configuracao do PostCSS
+    ├── components.json                # Configuracao do shadcn/ui
+    ├── jsconfig.json                  # Alias @/ → ./src/
+    ├── next.config.mjs                # Proxy /api → backend:3020
+    └── package.json
 ```
 
 ## Como comecar
+
+### Backend
 
 ```bash
 cd backend
@@ -30,4 +73,116 @@ npm run setup   # cria o banco e popula com dados
 npm start       # inicia o servidor em http://localhost:3020
 ```
 
-Para mais detalhes sobre os endpoints e o exercicio, veja o [README do backend](./backend/README.md).
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev     # inicia o servidor em http://localhost:3010
+```
+
+> **Importante:** O backend precisa estar rodando para o frontend funcionar.
+
+## TODOs do Backend (`backend/src/routes/products.js`)
+
+| TODO | Endpoint | Descricao |
+|------|----------|-----------|
+| 0 | `GET /products` | Adicionar filtro por tipo via query param `?type=` |
+| 1 | `GET /products/random` | Retornar um produto aleatorio |
+| 2 | `GET /products/stats` | Retornar contagem de produtos agrupados por tipo |
+| 3 | `GET /products/:id` | Retornar um produto pelo ID |
+| 4 | `POST /products` | Criar um novo produto |
+| 5 | `PUT /products/:id` | Atualizar um produto existente |
+| 6 | `DELETE /products/:id` | Deletar um produto |
+
+## TODOs do Frontend (`frontend/src/app/page.js`)
+
+Os TODOs do frontend estao concentrados em `page.js` e devem ser feitos **em ordem**:
+
+### TODO 0 — Criar state `selectedType`
+
+Criar um estado para armazenar o tipo de produto selecionado no filtro.
+
+```js
+const [selectedType, setSelectedType] = useState('');
+```
+
+### TODO 1 — Criar state `currentPage`
+
+Criar um estado para armazenar a pagina atual da paginacao.
+
+```js
+const [currentPage, setCurrentPage] = useState(1);
+```
+
+### TODO 2 — Montar a URL com query params
+
+Substituir a URL fixa `/api/products` por uma URL dinamica com os parametros de paginacao e filtro.
+
+```js
+const params = new URLSearchParams({
+  page: currentPage,
+  pageSize: PAGE_SIZE,
+});
+if (selectedType) params.set('type', selectedType);
+const url = `/api/products?${params}`;
+```
+
+### TODO 3 — Extrair dados e metadata da resposta
+
+A API retorna `{ data: [...], meta: { page, pageSize, total, totalPages } }`. Atualizar os estados com os valores corretos:
+
+```js
+setProducts(result.data);
+setTotalPages(result.meta.totalPages);
+setTotal(result.meta.total);
+```
+
+Tambem adicionar `currentPage` e `selectedType` como dependencias do `useEffect`.
+
+### TODO 4 — Conectar o filtro de tipo (Select)
+
+O componente `TypeFilter` ja esta renderizado, mas com valores fixos. Conectar com os states reais:
+
+1. Criar a funcao `handleTypeChange` que atualiza o tipo e reseta a pagina para 1
+2. Passar `selectedType={selectedType}` e `onTypeChange={handleTypeChange}` como props
+3. Atualizar o contador para usar `{total}` em vez de `{products.length}`
+
+```js
+const handleTypeChange = (type) => {
+  setSelectedType(type);
+  setCurrentPage(1);
+};
+```
+
+### TODO 5 — Conectar a paginacao
+
+O componente `Pagination` ja esta renderizado, mas com valores fixos. Substituir pelos states reais:
+
+```jsx
+<Pagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  onPageChange={setCurrentPage}
+/>
+```
+
+## Estrutura do banco de dados
+
+A tabela `products` possui os seguintes campos:
+
+| Campo | Tipo | Descricao |
+|-------|------|-----------|
+| `id` | integer | Chave primaria (auto-incremento) |
+| `name` | string | Nome do produto |
+| `code` | string | Codigo do produto |
+| `type` | string | Tipo: `inverter`, `module`, `cable`, `connector` |
+| `default_price_in_cents` | integer | Preco padrao em centavos |
+| `stock_quantity` | integer | Quantidade em estoque |
+| `weight` | float | Peso em kg |
+| `manufacturer_name` | string | Nome do fabricante |
+| `ac_power` | float | Potencia AC (inversores) |
+| `dc_power` | float | Potencia DC (modulos) |
+| `enabled` | boolean | Produto ativo/inativo |
+
+O seed popula o banco com **100 produtos** (25 de cada tipo).

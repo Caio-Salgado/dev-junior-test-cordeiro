@@ -6,17 +6,32 @@ const router = express.Router();
 // ============================================================================
 // TODO 0: GET /products
 //
-// Return all products. The route already works, but you need to add support
-// for an optional query parameter ?type= to filter products by type.
+// Return a paginated list of products. The route already works with pagination,
+// but you need to add support for an optional query parameter ?type= to filter
+// products by type.
 //
 // Valid types: "inverter", "module", "cable", "connector"
 //
-// Examples:
-//   GET /products               → returns all 100 products
-//   GET /products?type=inverter → returns only inverters
+// Query parameters:
+//   ?type=inverter  → filter by product type
+//   ?page=1         → page number (default: 1)
+//   ?pageSize=25    → items per page (default: 25)
 //
-// Expected response (200): an array of product objects
-//   [{ "id": 1, "name": "Inversor Growatt 3000W MIN", ... }, ...]
+// Examples:
+//   GET /products                        → returns first 25 products
+//   GET /products?type=inverter          → returns first 25 inverters
+//   GET /products?page=2&pageSize=10     → returns products 11-20
+//
+// Expected response (200): an object with data and pagination metadata
+//   {
+//     "data": [{ "id": 1, "name": "Inversor Growatt 3000W MIN", ... }, ...],
+//     "meta": {
+//       "page": 1,
+//       "pageSize": 25,
+//       "total": 100,
+//       "totalPages": 4
+//     }
+//   }
 //
 // Hint: Use req.query.type to access the query parameter.
 //       Knex has .where('column', value) to add a WHERE clause.
@@ -24,13 +39,31 @@ const router = express.Router();
 // ============================================================================
 router.get('/', async (req, res) => {
   try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const pageSize = Math.max(1, parseInt(req.query.pageSize) || 25);
+
     const query = db('products');
 
     // TODO: If req.query.type exists, filter products by type.
     //       Use query.where('type', req.query.type) to add the filter.
 
-    const products = await query.select('*');
-    res.json(products);
+    const countResult = await query.clone().count('* as total').first();
+    const total = countResult.total;
+
+    const products = await query
+      .select('*')
+      .limit(pageSize)
+      .offset((page - 1) * pageSize);
+
+    res.json({
+      data: products,
+      meta: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch products' });
   }
