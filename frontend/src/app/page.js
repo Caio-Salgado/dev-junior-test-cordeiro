@@ -24,6 +24,8 @@ export default function Home() {
   //       const [selectedType, setSelectedType] = useState('');
   // ==========================================================================
 
+  const [selectedType, setSelectedType] = useState('');
+
   // ==========================================================================
   // TODO 1: Criar state para a pagina atual
   //
@@ -31,6 +33,8 @@ export default function Home() {
   //
   // Dica: const [currentPage, setCurrentPage] = useState(1);
   // ==========================================================================
+
+const [currentPage, setCurrentPage] = useState(1);
 
   // --------------------------------------------------------------------------
   // Fetch dos produtos (ja implementado)

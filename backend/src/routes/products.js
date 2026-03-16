@@ -44,8 +44,11 @@ router.get('/', async (req, res) => {
 
     const query = db('products');
 
-    // TODO: If req.query.type exists, filter products by type.
+    // TODO 0: If req.query.type exists, filter products by type.
     //       Use query.where('type', req.query.type) to add the filter.
+    if (req.query.type) {
+      query.where('type', req.query.type);
+    }
 
     const countResult = await query.clone().count('* as total').first();
     const total = countResult.total;
