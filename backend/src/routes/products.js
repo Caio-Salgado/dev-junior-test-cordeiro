@@ -83,9 +83,21 @@ router.get('/', async (req, res) => {
 // Hint: Think about how to pick a random row from a SQL table.
 //       Knex has .orderByRaw() that can help with this.
 // ============================================================================
-// router.get('/random', async (req, res) => {
-//   // Your code here
-// });
+router.get('/random', async (req, res) => {
+  //a rota usa um query SQL no DB direto, mas não precisa receber nada do cliente, então não precisa de "req"
+  try {
+    const product = await db('products').orderByRaw('RANDOM()').first();
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('GET /products/random error:', error);
+    res.status(500).json({ error: 'Failed to fetch random product' });
+  }
+});
 
 // ============================================================================
 // TODO 2: GET /products/stats
