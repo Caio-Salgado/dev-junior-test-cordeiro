@@ -115,9 +115,17 @@ router.get('/random', async (req, res) => {
 // Hint: Knex has .groupBy() and .count() methods.
 //       Use .count('* as count') to name the count column.
 // ============================================================================
-// router.get('/stats', async (req, res) => {
-//   // Your code here
-// });
+router.get('/stats', async (req, res) => {
+    //a rota usa um query SQL no DB direto, mas não precisa receber nada do cliente, então não precisa de "req"
+  try {
+    const state = await db('products').select('type').count('* as count').groupBy('type')
+
+    res.json(state);
+  } catch (error) {
+    console.error('GET /products/stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch state' });
+  }
+});
 
 // ============================================================================
 // TODO 3: GET /products/:id
