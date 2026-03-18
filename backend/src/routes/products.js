@@ -178,9 +178,63 @@ router.get('/:id', async (req, res) => {
 //       Use .returning('*') or re-query the inserted row to return it.
 //       With SQLite + Knex, insert returns [id], so you can query by that id.
 // ============================================================================
-// router.post('/', async (req, res) => {
-//   // Your code here
-// });
+router.post('/', async (req, res) => {
+  try {
+    const {
+      name,
+      code,
+      type,
+      cost_in_cents,
+      default_price_in_cents,
+      weight,
+      manufacturer_name,
+      description,
+      business_unit,
+      stock_quantity,
+      enabled,
+      ac_power,
+      dc_power,
+    } = req.body;
+    //lista de campos obrigatórios, se faltar algum, ele vai ser adicionado nessa lista e retornar um erro
+    const missing = [];
+    if (!name) missing.push('name');
+    if (!code) missing.push('code');
+    if (!type) missing.push('type');
+    if (cost_in_cents == null) missing.push('cost_in_cents');
+    if (default_price_in_cents == null) missing.push('default_price_in_cents');
+    if (weight == null) missing.push('weight');
+    if (!manufacturer_name) missing.push('manufacturer_name');
+
+    if (missing.length > 0) {
+      return res.status(400).json({ error: `Missing required fields: ${missing.join(', ')}` });
+    }
+
+    const productData = {
+      name,
+      code,
+      type,
+      cost_in_cents,
+      default_price_in_cents,
+      weight,
+      manufacturer_name,
+    };
+    //adicionando os campos que foram enviados, se o campo não foi enviado, ele não é adicionado ao objeto productData
+    if (description !== undefined) productData.description = description;
+    if (business_unit !== undefined) productData.business_unit = business_unit;
+    if (stock_quantity !== undefined) productData.stock_quantity = stock_quantity;
+    if (enabled !== undefined) productData.enabled = enabled;
+    if (ac_power !== undefined) productData.ac_power = ac_power;
+    if (dc_power !== undefined) productData.dc_power = dc_power;
+
+    const [id] = await db('products').insert(productData);
+    const created = await db('products').where('id', id).first();
+
+    res.status(201).json(created);
+  } catch (error) {
+    console.error('POST /products error:', error);
+    res.status(500).json({ error: 'Failed to create product' });
+  }
+});
 
 // ============================================================================
 // TODO 5: PUT /products/:id
