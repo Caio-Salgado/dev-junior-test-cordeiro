@@ -141,9 +141,22 @@ router.get('/stats', async (req, res) => {
 //
 // Hint: Use .where('id', id).first() to get a single row.
 // ============================================================================
-// router.get('/:id', async (req, res) => {
-//   // Your code here
-// });
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await db('products').where('id', id).first();
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('GET /products/:id error:', error);
+    res.status(500).json({ error: 'Failed to fetch product' });
+  }
+});
 
 // ============================================================================
 // TODO 4: POST /products
