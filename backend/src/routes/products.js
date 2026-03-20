@@ -293,8 +293,20 @@ router.put('/:id', async (req, res) => {
 // Hint: Use .where('id', id).del() to delete.
 //       .del() returns the number of rows deleted (0 or 1).
 // ============================================================================
-// router.delete('/:id', async (req, res) => {
-//   // Your code here
-// });
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedRows = await db('products').where('id', id).del();
+    //se houver 0 linhas deletadas, quer dizer que o produto não existe
+    if (deletedRows === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) { 
+  console.error('DELETE /products/:id error:', error);
+  res.status(500).json({ error: 'Failed to delete product' });
+  }
+}); 
 
 module.exports = router;
