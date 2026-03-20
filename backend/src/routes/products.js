@@ -254,9 +254,29 @@ router.post('/', async (req, res) => {
 // Hint: Use .where('id', id).update(data) to update.
 //       Then query the product again to return the updated version.
 // ============================================================================
-// router.put('/:id', async (req, res) => {
-//   // Your code here
-// });
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    //se retornar um conjunto vazio, erro 400
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No fields provided to update' });
+    }
+    //se não retornar, erro 404
+    const existing = await db('products').where('id', id).first();
+    if (!existing) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    //atualiza os dados
+    await db('products').where('id', id).update(updates);
+    const updated = await db('products').where('id', id).first();
+
+    res.json(updated);
+  } catch (error) {
+    console.error('PUT /products/:id error:', error);
+    res.status(500).json({ error: 'Failed to update product' });
+  }
+});
 
 // ============================================================================
 // TODO 6: DELETE /products/:id
