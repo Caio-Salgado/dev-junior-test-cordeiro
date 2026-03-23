@@ -203,9 +203,9 @@ export default function Home() {
           mudar de pagina.
           ==================================================================== */}
       <Pagination
-        currentPage={1}
-        totalPages={1}
-        onPageChange={() => {}}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
       />
     </div>
   );
