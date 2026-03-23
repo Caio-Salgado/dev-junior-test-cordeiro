@@ -95,7 +95,7 @@ export default function Home() {
       }
     }
     fetchProducts();
-  }, [currentPage, selectedType]);  // ← refaz fetch ao mudar página ou filtro; // TODO: Adicione currentPage e selectedType como dependencias do useEffect
+  }, [currentPage, selectedType]); // TODO: Adicione currentPage e selectedType como dependencias do useEffect
   //       para que o fetch seja refeito quando a pagina ou o tipo mudar.
   //       Exemplo: }, [currentPage, selectedType]);
 
@@ -111,6 +111,11 @@ export default function Home() {
         Erro: {error}
       </div>
     );
+
+  const handleTypeChange = (type) => {
+  setSelectedType(type);
+  setCurrentPage(1);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -158,13 +163,14 @@ export default function Home() {
           Tambem atualize o contador para usar {total} em vez de
           {products.length}, para mostrar o total real da API.
           ==================================================================== */}
+
       <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
         <TypeFilter
-          selectedType=""
-          onTypeChange={() => {}}
+          selectedType={selectedType} 
+          onTypeChange={handleTypeChange}
         />
         <span className="text-sm text-muted-foreground">
-          {products.length} produto(s) encontrado(s)
+          {total} produto(s) encontrado(s)
         </span>
       </div>
 
