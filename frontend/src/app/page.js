@@ -34,7 +34,7 @@ export default function Home() {
   // Dica: const [currentPage, setCurrentPage] = useState(1);
   // ==========================================================================
 
-const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // --------------------------------------------------------------------------
   // Fetch dos produtos (ja implementado)
@@ -66,12 +66,13 @@ const [currentPage, setCurrentPage] = useState(1);
         //
         // Substitua a URL fixa abaixo pela URL montada dinamicamente.
         // ====================================================================
-        const url = '/api/products';
-
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Erro ao buscar produtos');
-        const result = await response.json();
-
+        const params = new URLSearchParams({ page: currentPage, pageSize: PAGE_SIZE });
+        //lendo selectedType
+        if (selectedType) params.set('type', selectedType);  
+          const url = `/api/products?${params}`;
+          const response = await fetch(url);  
+          if (!response.ok) throw new Error('Erro ao buscar produtos');
+            const result = await response.json();
         // ====================================================================
         // TODO 3: Extrair os dados e metadata da resposta
         //
@@ -85,6 +86,8 @@ const [currentPage, setCurrentPage] = useState(1);
         // Substitua o setProducts abaixo pela logica correta.
         // ====================================================================
         setProducts(result.data || result);
+        setTotalPages(result.meta.totalPages);
+        setTotal(result.meta.total);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -92,7 +95,7 @@ const [currentPage, setCurrentPage] = useState(1);
       }
     }
     fetchProducts();
-  }, []); // TODO: Adicione currentPage e selectedType como dependencias do useEffect
+  }, [currentPage, selectedType]);  // ← refaz fetch ao mudar página ou filtro; // TODO: Adicione currentPage e selectedType como dependencias do useEffect
   //       para que o fetch seja refeito quando a pagina ou o tipo mudar.
   //       Exemplo: }, [currentPage, selectedType]);
 
